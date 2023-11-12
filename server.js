@@ -1,5 +1,3 @@
-// console.log('Halo, kita akan belajar membuat server.');
-
 const http = require('http'); 
 /**
  * Logika untuk menangani dan menanggapi request dituliskan pada fungsi ini
@@ -10,10 +8,35 @@ const http = require('http');
 const requestListener = (request, response) => {
     response.setHeader('Content-Type', 'text/html');
     response.statusCode = 200;
-    response.end('<p>HTTP Server Menyala!</p>')
+
+    const { method } = request;
+    
+    if (method === 'GET') {
+        response.end('<p>Anda sedang melakukan GET...</p>')
+    }
+    
+    if (method === 'POST') {
+        let body = [];
+        request.on('data', (chunk) => {
+            body,push(chunk);
+        });
+        request.on('end', () => {
+            body = Buffer.concat(body).toString();
+            response.end(`<p> sedang melakukan POST...</p>`);
+        });
+    }
+
+    if (method === 'PUT') {
+        response.end('<p>Anda sedang melakukan PUT...</p>')
+    }
+
+    if (method === 'DELETE') {
+        response.end('<p>Anda sedang melakukan DELETE...</p>')
+    }
 };
  
 const server = http.createServer(requestListener);
+
 const port = 5000;
 const host = 'localhost';
 

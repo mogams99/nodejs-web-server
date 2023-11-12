@@ -6,35 +6,67 @@ const http = require('http');
  * @param response: objek yang digunakan untuk menanggapi permintaan
  */
 const requestListener = (request, response) => {
-    response.setHeader('Content-Type', 'text/html');
-    response.statusCode = 200;
+    response.setHeader('Content-Type', 'application/json');
+    response.setHeader('X-Powered-By', 'NodeJS');
 
     const {
-        method
+        method,
+        url
     } = request;
 
-    if (method === 'GET') {
-        response.end('<p>Anda sedang melakukan GET...</p>')
-    }
-
-    if (method === 'POST') {
-        let body = [];
-        request.on('data', (chunk) => {
-            body,
-            push(chunk);
-        });
-        request.on('end', () => {
-            body = Buffer.concat(body).toString();
-            response.end(`<p> sedang melakukan POST...</p>`);
-        });
-    }
-
-    if (method === 'PUT') {
-        response.end('<p>Anda sedang melakukan PUT...</p>')
-    }
-
-    if (method === 'DELETE') {
-        response.end('<p>Anda sedang melakukan DELETE...</p>')
+    if (url == '/') {
+        if (method === 'GET') {
+            response.statusCode = 200;
+            response.end(JSON.stringify({
+                message: `Anda sedang melakukan ${method} pada root url...`,
+            }));
+        } else {
+            response.statusCode = 400;
+            response.end(JSON.stringify({
+                message: `Method ${method} tidak didukung root url!`,
+            }));
+        }
+    } else if (url == '/about') {
+        if (method === 'GET') {
+            response.statusCode = 200;
+            response.end(JSON.stringify({
+                message: `Anda sedang melakukan ${method} pada about url...`,
+            }));
+        } else if (method === 'POST') {
+            let body = [];
+            request.on('data', (chunk) => {
+                body.push(chunk);
+            });
+            request.on('end', () => {
+                body = Buffer.concat(body).toString();
+                const { name } = JSON.parse(body);
+                response.statusCode = 200;
+                response.end(JSON.stringify({
+                    message: `${name} sedang melakukan ${method} pada about url...`,
+                }));
+            });
+        } else if (method === 'PUT') {
+            response.statusCode = 200;
+            response.end(JSON.stringify({
+                message: `Anda sedang melakukan ${method} pada about url...`,
+            }));
+        } else if (method === 'DELETE') {
+            response.statusCode = 200;
+            response.end(JSON.stringify({
+                message: `Anda sedang melakukan ${method} pada about url...`,
+            }));
+        } else {
+            response.statusCode = 400;
+            response.end(JSON.stringify({
+                message: `Method ${method} tidak didukung root url!`,
+            }));
+        }
+    } else {
+        response.statusCode = 404;
+        response.end('<p>URL tidak ditemukan!</p>')
+        response.end(JSON.stringify({
+            message: `Method ${method} tidak didukung root url!`,
+        }));
     }
 };
 

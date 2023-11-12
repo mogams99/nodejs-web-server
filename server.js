@@ -1,4 +1,4 @@
-const http = require('http'); 
+const http = require('http');
 /**
  * Logika untuk menangani dan menanggapi request dituliskan pada fungsi ini
  * 
@@ -9,16 +9,19 @@ const requestListener = (request, response) => {
     response.setHeader('Content-Type', 'text/html');
     response.statusCode = 200;
 
-    const { method } = request;
-    
+    const {
+        method
+    } = request;
+
     if (method === 'GET') {
         response.end('<p>Anda sedang melakukan GET...</p>')
     }
-    
+
     if (method === 'POST') {
         let body = [];
         request.on('data', (chunk) => {
-            body,push(chunk);
+            body,
+            push(chunk);
         });
         request.on('end', () => {
             body = Buffer.concat(body).toString();
@@ -34,7 +37,7 @@ const requestListener = (request, response) => {
         response.end('<p>Anda sedang melakukan DELETE...</p>')
     }
 };
- 
+
 const server = http.createServer(requestListener);
 
 const port = 5000;
